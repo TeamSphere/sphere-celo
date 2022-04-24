@@ -71,7 +71,7 @@ contract SphereDAO is ReentracyGuard, AccessControl {
           uint256 amount
       )
           external
-          onlyStakeholder("Only stakeholders are allowed to create proposals")
+          onlyStakeholder("Only contributors are allowed to make proposals")
       {
           uint256 proposalId = numOfProposals++;
           CharityProposal storage proposal = charityProposals[proposalId];
@@ -87,7 +87,7 @@ contract SphereDAO is ReentracyGuard, AccessControl {
 
       function vote(uint256 proposalId, bool supportProposal)
           external
-          onlyStakeholder("Only stakeholders are allowed to vote")
+          onlyStakeholder("Only contributors are allowed to vote")
       {
           CharityProposal storage charityProposal = charityProposals[proposalId];
 
@@ -105,24 +105,24 @@ contract SphereDAO is ReentracyGuard, AccessControl {
               charityProposal.livePeriod <= block.timestamp
           ) {
               charityProposal.votingPassed = true;
-              revert("Voting period has passed on this proposal");
+              revert("Time is up voting on this proposal");
           }
 
           uint256[] memory tempVotes = stakeholderVotes[msg.sender];
           for (uint256 votes = 0; votes < tempVotes.length; votes++) {
               if (charityProposal.id == tempVotes[votes])
-                  revert("This stakeholder already voted on this proposal");
+                  revert("You already voted on this proposal");
           }
       }
 
       function payCharity(uint256 proposalId)
           external
-          onlyStakeholder("Only stakeholders are allowed to make payments")
+          onlyStakeholder("Only contributors are allowed to make payments")
       {
           CharityProposal storage charityProposal = charityProposals[proposalId];
 
           if (charityProposal.paid)
-              revert("Payment has been made to this charity");
+              revert("Payment has been made to the sphere");
 
           if (charityProposal.votesFor <= charityProposal.votesAgainst)
               revert(
